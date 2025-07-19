@@ -109,8 +109,8 @@ const items: Item[] = new Array(20)
   .map((_, i) => ({ 
     ...baseItems[i % baseItems.length], 
     index: i,
-    // Make every 5th item disabled
-    disabled: i % 5 === 4,
+    // Make every 4th item disabled to show clear separation
+    disabled: i % 4 === 3,
   }));
 
 const columns: TableColumnDefinition<Item>[] = [
@@ -244,12 +244,14 @@ DisabledRows.parameters = {
         'This example demonstrates disabled row support in the DataGrid.',
         '',
         'Features:',
-        '- Disabled rows are visually distinct (grayed out)',
-        '- Selection cells are hidden for disabled rows',
+        '- Disabled rows are visually distinct (grayed out with reduced opacity)',
+        '- Selection cells are hidden for disabled rows', 
         '- Disabled rows are excluded from selection operations',
         '- Disabled rows are always positioned at the end when sorted',
+        '- Supports aria-disabled for accessibility',
         '',
-        'In this example, every 5th item is disabled and will appear at the bottom.',
+        'In this example, every 4th item is disabled and will appear at the bottom.',
+        'Try sorting by different columns to see that disabled items stay at the end.',
       ].join('\n'),
     },
   },
