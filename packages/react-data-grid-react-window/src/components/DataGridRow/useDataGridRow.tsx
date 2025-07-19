@@ -5,6 +5,7 @@ import type {
 } from '@fluentui/react-components';
 import { useDataGridRow_unstable as useBaseState } from '@fluentui/react-components';
 import { useTableRowIndexContext } from '../../contexts/rowIndexContext';
+import { useDisabledRowContext } from '../../contexts/disabledRowContext';
 
 /**
  * Create the state required to render DataGridRow.
@@ -20,5 +21,26 @@ export const useDataGridRow_unstable = (
   ref: React.Ref<HTMLElement>
 ): DataGridRowState => {
   const rowIndex = useTableRowIndexContext();
-  return useBaseState({ ...props, 'aria-rowindex': rowIndex }, ref);
+  const isDisabled = useDisabledRowContext();
+  
+  // For disabled rows, we want to prevent selection
+  const modifiedProps = isDisabled
+    ? { 
+        ...props, 
+        'aria-rowindex': rowIndex,
+        'aria-disabled': true,
+        // Override selection behavior for disabled rows
+        onClick: undefined,
+        onSelectionChange: undefined,
+      }
+    : { ...props, 'aria-rowindex': rowIndex };
+  
+  const state = useBaseState(modifiedProps, ref);
+  
+  // Add disabled state to the row state for styling
+  return {
+    ...state,
+    // Adding disabled as a custom property that can be used in styling
+    ...(isDisabled && { 'data-disabled': true }),
+  } as DataGridRowState & { 'data-disabled'?: boolean };
 };

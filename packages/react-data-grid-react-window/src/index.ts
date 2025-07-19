@@ -41,3 +41,4 @@ export type {
   RowRenderer,
 } from './components/DataGridBody';
 export type { DataGridState } from './components/DataGrid';
+export type { DisabledItem, WithDisabled } from './types';
