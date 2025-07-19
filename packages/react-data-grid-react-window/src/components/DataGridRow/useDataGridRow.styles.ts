@@ -12,16 +12,39 @@ const useStyles = makeStyles({
     minWidth: 'fit-content',
   },
   disabled: {
-    opacity: tokens.colorNeutralForegroundDisabled,
+    opacity: '0.6',
     cursor: 'not-allowed',
     pointerEvents: 'none',
     color: tokens.colorNeutralForegroundDisabled,
+    backgroundColor: tokens.colorNeutralBackground2,
+    
+    // Style all cells in disabled rows
     '& [role="gridcell"]': {
       color: tokens.colorNeutralForegroundDisabled,
     },
-    // Hide selection cell for disabled rows
-    '& [role="gridcell"][data-selection-cell="true"]': {
-      visibility: 'hidden',
+    
+    // Hide the selection cell for disabled rows
+    // This targets the checkbox/selection cell specifically
+    '& [role="gridcell"]:first-child': {
+      '& input[type="checkbox"]': {
+        visibility: 'hidden',
+      },
+      '& [data-testid="checkbox"]': {
+        visibility: 'hidden',
+      },
+    },
+    
+    // Disable hover and focus states for disabled rows
+    '&:hover': {
+      backgroundColor: tokens.colorNeutralBackground2,
+    },
+    
+    '&:focus': {
+      outline: 'none',
+    },
+    
+    '&[aria-selected="true"]': {
+      backgroundColor: tokens.colorNeutralBackground2,
     },
   },
 });

@@ -23,24 +23,15 @@ export const useDataGridRow_unstable = (
   const rowIndex = useTableRowIndexContext();
   const isDisabled = useDisabledRowContext();
   
-  // For disabled rows, we want to prevent selection
-  const modifiedProps = isDisabled
-    ? { 
-        ...props, 
-        'aria-rowindex': rowIndex,
-        'aria-disabled': true,
-        // Override selection behavior for disabled rows
-        onClick: undefined,
-        onSelectionChange: undefined,
-      }
-    : { ...props, 'aria-rowindex': rowIndex };
+  const state = useBaseState({ ...props, 'aria-rowindex': rowIndex }, ref);
   
-  const state = useBaseState(modifiedProps, ref);
+  // Add disabled state to the row for accessibility and styling
+  if (isDisabled) {
+    // Set aria-disabled for accessibility
+    if (state.root) {
+      state.root['aria-disabled'] = true;
+    }
+  }
   
-  // Add disabled state to the row state for styling
-  return {
-    ...state,
-    // Adding disabled as a custom property that can be used in styling
-    ...(isDisabled && { 'data-disabled': true }),
-  } as DataGridRowState & { 'data-disabled'?: boolean };
+  return state;
 };
