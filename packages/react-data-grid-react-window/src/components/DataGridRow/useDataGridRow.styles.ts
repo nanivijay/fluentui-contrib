@@ -14,7 +14,6 @@ const useStyles = makeStyles({
   disabled: {
     opacity: '0.6',
     cursor: 'not-allowed',
-    pointerEvents: 'none',
     color: tokens.colorNeutralForegroundDisabled,
     backgroundColor: tokens.colorNeutralBackground2,
     

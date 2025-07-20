@@ -43,6 +43,17 @@ export const useDataGrid_unstable = (
   const headerRef = React.useRef<HTMLDivElement | null>(null);
   const bodyRef = React.useRef<HTMLDivElement | null>(null);
 
+  // Filter out disabled items from selection props
+  const filteredSelectedItems = React.useMemo(() => {
+    if (!props.selectedItems) return undefined;
+    return (props.selectedItems as DisabledItem[]).filter(item => !item.disabled);
+  }, [props.selectedItems]);
+
+  const filteredDefaultSelectedItems = React.useMemo(() => {
+    if (!props.defaultSelectedItems) return undefined;
+    return (props.defaultSelectedItems as DisabledItem[]).filter(item => !item.disabled);
+  }, [props.defaultSelectedItems]);
+
   // Override selection change callback to exclude disabled items
   const originalOnSelectionChange = props.onSelectionChange;
   const onSelectionChange = React.useCallback((e: any, data: any) => {
@@ -58,6 +69,19 @@ export const useDataGrid_unstable = (
     }
   }, [originalOnSelectionChange]);
 
+  // Override getRowId to ensure disabled items are handled properly
+  const originalGetRowId = props.getRowId;
+  const getRowId = React.useCallback((item: any) => {
+    // Use original getRowId if provided, otherwise use index
+    if (originalGetRowId) {
+      return originalGetRowId(item);
+    }
+    // Fallback to item index or a generated ID
+    const items = props.items as DisabledItem[];
+    const index = items.indexOf(item);
+    return `row-${index}`;
+  }, [originalGetRowId, props.items]);
+
   let containerWidthOffset = props.containerWidthOffset;
 
   if (containerWidthOffset === undefined) {
@@ -69,8 +93,11 @@ export const useDataGrid_unstable = (
 
   const baseState = useBaseState(
     { 
-      ...props, 
+      ...props,
+      selectedItems: filteredSelectedItems,
+      defaultSelectedItems: filteredDefaultSelectedItems,
       onSelectionChange,
+      getRowId,
       'aria-rowcount': props.items.length, 
       containerWidthOffset 
     },
