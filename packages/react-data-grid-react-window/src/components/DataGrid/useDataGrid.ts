@@ -13,7 +13,12 @@ const TABLE_SELECTION_CELL_WIDTH = 44;
  * Sorts rows to keep disabled items at the end while preserving the current sort order
  * This should be applied after the base sorting logic
  */
-const moveDisabledRowsToEnd = <T>(rows: T[]): T[] => {
+const moveDisabledRowsToEnd = <T>(rows: T[] | undefined): T[] => {
+  // Handle undefined/null rows gracefully
+  if (!rows || !Array.isArray(rows)) {
+    return [];
+  }
+  
   // Assuming rows have an 'item' property that contains the actual data
   const enabledRows = rows.filter((row: any) => !(row.item as DisabledItem)?.disabled);
   const disabledRows = rows.filter((row: any) => (row.item as DisabledItem)?.disabled);
@@ -75,7 +80,8 @@ export const useDataGrid_unstable = (
   // After the base state is created, reorder the rows to move disabled items to the end
   // This preserves any sorting that was applied by the base component
   const rowsWithDisabledAtEnd = React.useMemo(() => {
-    return moveDisabledRowsToEnd(baseState.rows);
+    // Only process rows if they exist, otherwise return the original rows or empty array
+    return baseState.rows ? moveDisabledRowsToEnd(baseState.rows) : [];
   }, [baseState.rows]);
 
   if (
@@ -88,7 +94,7 @@ export const useDataGrid_unstable = (
 
   return {
     ...baseState,
-    rows: rowsWithDisabledAtEnd,
+    rows: baseState.rows ? rowsWithDisabledAtEnd : baseState.rows,
     headerRef,
     bodyRef,
   };
