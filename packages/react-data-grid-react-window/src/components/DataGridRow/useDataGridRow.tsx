@@ -61,9 +61,11 @@ export const useDataGridRow_unstable = (
     // Set aria-disabled for accessibility
     if (state.root) {
       state.root['aria-disabled'] = true;
-      // Also disable selection by setting aria-selected to false and making it non-interactive
-      if (state.root['aria-selected']) {
-        state.root['aria-selected'] = false;
+      // Disable selection by setting aria-selected to false and making it non-selectable
+      state.root['aria-selected'] = false;
+      // Remove any selection-related attributes to prevent selection
+      if (state.root.tabIndex !== undefined) {
+        state.root.tabIndex = -1;
       }
     }
   }

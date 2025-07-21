@@ -43,17 +43,6 @@ export const useDataGrid_unstable = (
   const headerRef = React.useRef<HTMLDivElement | null>(null);
   const bodyRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Filter out disabled items from selection props
-  const filteredSelectedItems = React.useMemo(() => {
-    if (!props.selectedItems) return undefined;
-    return (props.selectedItems as DisabledItem[]).filter(item => !item.disabled);
-  }, [props.selectedItems]);
-
-  const filteredDefaultSelectedItems = React.useMemo(() => {
-    if (!props.defaultSelectedItems) return undefined;
-    return (props.defaultSelectedItems as DisabledItem[]).filter(item => !item.disabled);
-  }, [props.defaultSelectedItems]);
-
   // Override selection change callback to exclude disabled items
   const originalOnSelectionChange = props.onSelectionChange;
   const onSelectionChange = React.useCallback((e: any, data: any) => {
@@ -94,8 +83,6 @@ export const useDataGrid_unstable = (
   const baseState = useBaseState(
     { 
       ...props,
-      selectedItems: filteredSelectedItems,
-      defaultSelectedItems: filteredDefaultSelectedItems,
       onSelectionChange,
       getRowId,
       'aria-rowcount': props.items.length, 
@@ -107,8 +94,8 @@ export const useDataGrid_unstable = (
   // After the base state is created, reorder the rows to move disabled items to the end
   // This preserves any sorting that was applied by the base component
   const rowsWithDisabledAtEnd = React.useMemo(() => {
-    // Only process rows if they exist, otherwise return the original rows or empty array
-    return baseState.rows ? moveDisabledRowsToEnd(baseState.rows) : [];
+    // Only process rows if they exist, otherwise return undefined to maintain original behavior
+    return baseState.rows ? moveDisabledRowsToEnd(baseState.rows) : baseState.rows;
   }, [baseState.rows]);
 
   if (
@@ -121,7 +108,7 @@ export const useDataGrid_unstable = (
 
   return {
     ...baseState,
-    rows: baseState.rows ? rowsWithDisabledAtEnd : baseState.rows,
+    rows: rowsWithDisabledAtEnd,
     headerRef,
     bodyRef,
   };
