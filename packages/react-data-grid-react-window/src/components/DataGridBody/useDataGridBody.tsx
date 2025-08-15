@@ -9,8 +9,10 @@ import {
   TableRowIdContextProvider,
 } from '@fluentui/react-components';
 import { TableRowIndexContextProvider } from '../../contexts/rowIndexContext';
+import { DisabledRowContextProvider } from '../../contexts/disabledRowContext';
 import { useBodyRefContext } from '../../contexts/bodyRefContext';
 import { useHeaderRefContext } from '../../contexts/headerRefContext';
+import type { DisabledItem } from '../../types';
 
 type RowRenderFunction =
   import('@fluentui/react-components').DataGridBodyState['renderRow'];
@@ -50,10 +52,15 @@ export const useDataGridBody_unstable = (
   const virtualizedRow: DataGridBodyState['virtualizedRow'] = React.useCallback(
     ({ data, index, style, isScrolling }) => {
       const row: TableRowData<unknown> = data[index];
+      const item = row.item as DisabledItem;
+      const isDisabled = Boolean(item?.disabled);
+      
       return (
         <TableRowIndexContextProvider value={ariaRowIndexStart + index}>
           <TableRowIdContextProvider value={row.rowId}>
-            {children(row, style, index, isScrolling)}
+            <DisabledRowContextProvider value={isDisabled}>
+              {children(row, style, index, isScrolling)}
+            </DisabledRowContextProvider>
           </TableRowIdContextProvider>
         </TableRowIndexContextProvider>
       );

@@ -6,6 +6,7 @@ export { VirtualizedDataGrid } from './VirtualizedDataGrid.stories';
 export { ReactWindowOverrides } from './ReactWindowOverrides.stories';
 export { DataGridScrollingIndicators } from './DataGridScrollingIndicators.stories';
 export { ResizableDataGrid } from './ResizableDataGrid.stories';
+export { DisabledRows } from './DisabledRows.stories';
 
 const meta: Meta<typeof DataGrid> = {
   title: 'Packages/react-data-grid-react-window',
